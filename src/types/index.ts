@@ -9,9 +9,7 @@ export interface UserProfile {
 
 export type Venue = 
   | 'Barangay Gymnasium' 
-  | 'Multipurpose Barangay Hall' 
-  | 'Session Hall' 
-  | 'Covered Basketball Court';
+  | 'Multipurpose Barangay Hall';
 
 export type EventType = 
   | 'Official Meeting' 

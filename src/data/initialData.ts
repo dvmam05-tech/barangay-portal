@@ -125,7 +125,7 @@ export const INITIAL_MEETINGS: CouncilMeeting[] = [
     type: 'Regular Session',
     date: '2026-09-04',
     time: '09:00 AM',
-    venue: 'Session Hall',
+    venue: 'Multipurpose Barangay Hall',
     presidingOfficer: 'Hon. Roberto "Jun" M. Santos (Punong Barangay)',
     agenda: [
       'Approval of Minutes of the 12th Regular Session',
@@ -155,7 +155,7 @@ export const INITIAL_MEETINGS: CouncilMeeting[] = [
     type: 'Regular Session',
     date: '2026-09-18',
     time: '09:00 AM',
-    venue: 'Session Hall',
+    venue: 'Multipurpose Barangay Hall',
     presidingOfficer: 'Hon. Roberto "Jun" M. Santos (Punong Barangay)',
     agenda: [
       'Call to Order & Roll Call of Members',
@@ -195,17 +195,5 @@ export const VENUE_DETAILS = {
     description: 'Air-conditioned main assembly hall equipped with stage, multi-media projection, sound system, and breakout function rooms.',
     amenities: ['Central Air-conditioning', 'Audio-Visual Projector', 'Stage & Podium', 'Folding Tables & Chairs', 'Restrooms', 'Catering Pantry'],
     rules: 'No smoking or vaping. Clean-as-you-go policy. Garbage segregation strictly enforced.',
-  },
-  'Session Hall': {
-    capacity: 50,
-    description: 'Dedicated council chamber for official Sangguniang Barangay regular sessions, committee hearings, and executive deliberations.',
-    amenities: ['Executive Microphones', 'U-shaped Council Dais', 'Recording System', 'Air Conditioning', 'Public Gallery'],
-    rules: 'Formal/smart casual attire required. Strict decorum during official proceedings.',
-  },
-  'Covered Basketball Court': {
-    capacity: 350,
-    description: 'Outdoor roofed court for community sports leagues, purok meetings, and youth activities.',
-    amenities: ['Polyurethane Flooring', 'Dual Basketball Hoops', 'Lighting for evening games', 'Perimeter Benches'],
-    rules: 'Available from 6:00 AM to 9:30 PM. Priority given to official barangay youth leagues.',
   }
 };

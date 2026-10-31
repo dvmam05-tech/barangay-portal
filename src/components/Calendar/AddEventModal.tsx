@@ -117,8 +117,6 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({ isOpen, onClose })
               >
                 <option value="Barangay Gymnasium">Barangay Gymnasium</option>
                 <option value="Multipurpose Barangay Hall">Multipurpose Barangay Hall</option>
-                <option value="Session Hall">Session Hall</option>
-                <option value="Covered Basketball Court">Covered Basketball Court</option>
               </select>
             </div>
           </div>

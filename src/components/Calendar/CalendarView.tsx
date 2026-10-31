@@ -399,8 +399,6 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ onOpenAddModal }) =>
             <option value="All">All Venues</option>
             <option value="Barangay Gymnasium">Barangay Gymnasium</option>
             <option value="Multipurpose Barangay Hall">Multipurpose Barangay Hall</option>
-            <option value="Session Hall">Session Hall</option>
-            <option value="Covered Basketball Court">Covered Court</option>
           </select>
         </div>
 
