@@ -63,8 +63,15 @@ export const eventToActivityPayload = (
     return t.length === 5 ? `${t}:00` : t;
   };
 
+  const isUUID = (str?: string) =>
+    Boolean(str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str));
+
+  const validId = isUUID(event.id) 
+    ? event.id 
+    : (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : undefined);
+
   return {
-    ...(event.id ? { id: event.id } : {}),
+    ...(validId ? { id: validId } : {}),
     title: event.title,
     description: event.description || '',
     activity_type: event.type || 'Community Event',
@@ -75,7 +82,7 @@ export const eventToActivityPayload = (
     organizer: event.organizer,
     target_audience: event.targetAudience || 'All Residents',
     expected_attendees: event.expectedAttendees || 0,
-    status: event.status || 'Scheduled',
+    status: event.status === 'Approved' ? 'Scheduled' : (event.status || 'Scheduled'),
     created_by: createdBy || 'Barangay Administration',
   };
 };

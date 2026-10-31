@@ -550,7 +550,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Event handlers
   const addEvent = (eventData: Omit<BarangayEvent, 'id' | 'createdAt'>): BarangayEvent => {
-    const tempId = 'evt-' + Date.now();
+    const tempId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'evt-' + Date.now();
     const newEvent: BarangayEvent = {
       ...eventData,
       id: tempId,
@@ -567,7 +567,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Save to Supabase Cloud Database
     if (isSupabaseConfigured) {
-      insertActivityToSupabase(eventData, currentUser.name).then(savedEvent => {
+      insertActivityToSupabase(newEvent, currentUser.name).then(savedEvent => {
         if (savedEvent) {
           setEvents(prev => prev.map(e => (e.id === tempId ? savedEvent : e)));
         }
@@ -689,7 +689,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 2. AUTOMATICALLY LINK TO CENTRAL CALENDAR:
     // Create an approved calendar event derived from this facility reservation!
     const newCalendarEvent: BarangayEvent = {
-      id: 'evt-res-' + target.id,
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : ('evt-res-' + target.id),
       title: `${target.purpose} (${target.organizationName})`,
       description: `Facility Reservation [${target.referenceNumber}]. Contact: ${target.contactPerson} (${target.contactNumber}). Attendees: ~${target.attendeeEstimate}. Requested: ${target.equipmentRequested.join(', ')}. Remarks: ${adminRemarks || 'Official approval granted.'}`,
       organizer: target.organizationName,
