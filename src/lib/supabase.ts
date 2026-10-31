@@ -149,7 +149,9 @@ export const updateActivityInSupabase = async (
     if (updates.venue !== undefined) payload.venue = updates.venue;
     if (updates.organizer !== undefined) payload.organizer = updates.organizer;
     if (updates.type !== undefined) payload.activity_type = updates.type;
-    if (updates.status !== undefined) payload.status = updates.status;
+    if (updates.status !== undefined) {
+      payload.status = updates.status === 'Approved' ? 'Scheduled' : updates.status;
+    }
     if (updates.targetAudience !== undefined) payload.target_audience = updates.targetAudience;
     if (updates.expectedAttendees !== undefined) payload.expected_attendees = updates.expectedAttendees;
 
@@ -328,7 +330,9 @@ export const updateReservationInSupabase = async (
 ): Promise<boolean> => {
   try {
     const payload: Record<string, unknown> = {};
-    if (updates.status !== undefined) payload.status = updates.status;
+    if (updates.status !== undefined) {
+      payload.status = updates.status === 'Approved' ? 'Scheduled' : updates.status;
+    }
     if (updates.adminRemarks !== undefined) payload.admin_remarks = updates.adminRemarks;
     if (updates.reviewedBy !== undefined) payload.reviewed_by = updates.reviewedBy;
     if (updates.reviewedAt !== undefined) payload.reviewed_at = updates.reviewedAt;

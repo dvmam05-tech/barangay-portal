@@ -9,6 +9,7 @@ import {
   MapPin,
   CalendarCheck,
   Clock,
+  Landmark,
 } from 'lucide-react';
 import { VENUE_DETAILS } from '../../data/initialData';
 
@@ -36,13 +37,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
   // Next upcoming event for quick preview
   const nextEvent = events.length > 0 ? events[0] : null;
 
-  // Determine current facility status for today (simulate current time: ~18:00)
-  const checkFacilityCurrentStatus = (venueName: 'Barangay Gymnasium' | 'Multipurpose Barangay Hall') => {
-    const today = '2026-09-17'; // Today's simulated baseline
-    const nowMinutes = 18 * 60; // 18:00
+  // Determine current facility status for today using Philippine Standard Time (PST UTC+8)
+  const checkFacilityCurrentStatus = (venueName: string) => {
+    const now = new Date();
+    // Get live date in Asia/Manila (YYYY-MM-DD)
+    const todayPST = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
+    // Get live time in minutes from midnight (Manila time)
+    const manilaTimeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Manila', hour12: false });
+    const [h, m] = manilaTimeStr.split(':').map(Number);
+    const nowMinutes = (h || 0) * 60 + (m || 0);
 
     const occupyingEvent = events.find(e => {
-      if (e.venue !== venueName || e.date !== today) return false;
+      if (e.venue !== venueName || e.date !== todayPST) return false;
+      if (e.status === 'Cancelled') return false;
       const start = timeToMinutes(e.startTime);
       const end = timeToMinutes(e.endTime);
       return nowMinutes >= start && nowMinutes <= end;
@@ -117,28 +124,52 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
-        {/* Card 3: Audit Activity */}
-        <div
-          onClick={() => setActiveTab('audit')}
-          className="p-5 rounded-2xl bg-white dark:bg-phdark-900 border border-slate-200 dark:border-phdark-800 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Audit Trail</span>
-            <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
-              <ShieldCheck className="w-5 h-5" />
+        {/* Card 3: Audit Activity (Admin) OR Public Venues (Public Viewers) */}
+        {userRole === 'admin' ? (
+          <div
+            onClick={() => setActiveTab('audit')}
+            className="p-5 rounded-2xl bg-white dark:bg-phdark-900 border border-slate-200 dark:border-phdark-800 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Audit Trail</span>
+              <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="mt-3 flex items-baseline">
+              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
+                {auditLogs.length}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">Actions Logged</span>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-purple-600 dark:text-purple-400 font-medium pt-2 border-t border-slate-100 dark:border-phdark-800">
+              <span>View Full Trail</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
-          <div className="mt-3">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              {auditLogs.length}
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">Actions Logged</span>
+        ) : (
+          <div
+            onClick={() => setActiveTab('reservations')}
+            className="p-5 rounded-2xl bg-white dark:bg-phdark-900 border border-slate-200 dark:border-phdark-800 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Community Venues</span>
+              <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                <Landmark className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="mt-3 flex items-baseline">
+              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
+                {Object.keys(VENUE_DETAILS).length}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">Facilities Available</span>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-emerald-600 dark:text-emerald-400 font-medium pt-2 border-t border-slate-100 dark:border-phdark-800">
+              <span>Reserve a Barangay Venue</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
           </div>
-          <div className="mt-3 flex items-center justify-between text-[11px] text-purple-600 dark:text-purple-400 font-medium pt-2 border-t border-slate-100 dark:border-phdark-800">
-            <span>View Full Trail</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Facilities Availability Section */}

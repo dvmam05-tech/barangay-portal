@@ -201,13 +201,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenHelp, isOpenMobile, onCl
             <span>Usability & Portal Guide</span>
           </button>
 
-          <button
-            onClick={resetToDefaultData}
-            className="w-full flex items-center gap-3 px-3.5 py-2 rounded-2xl text-xs font-semibold text-slate-400 hover:text-accent-soft hover:bg-accent/10 transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>Reset Demo Data</span>
-          </button>
+          {userRole === 'admin' && (
+            <button
+              onClick={() => {
+                if (window.confirm('Restore initial sample records? This will reset your local browser cache.')) {
+                  resetToDefaultData();
+                }
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2 rounded-2xl text-xs font-semibold text-slate-400 hover:text-accent-soft hover:bg-accent/10 transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Reset Demo Data</span>
+            </button>
+          )}
         </div>
 
         {/* Footer info */}
