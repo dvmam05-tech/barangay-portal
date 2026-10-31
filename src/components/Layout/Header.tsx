@@ -82,27 +82,27 @@ export const Header: React.FC<HeaderProps> = ({
   const upcomingEvents = events.slice(0, 5);
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/95 dark:bg-phdark-900/95 backdrop-blur-md border-b border-slate-200 dark:border-phdark-800 px-4 sm:px-6 flex items-center justify-between transition-colors shadow-xs">
+    <header className="sticky top-0 z-30 h-16 bg-white/95 dark:bg-phdark-900/95 backdrop-blur-md border-b border-slate-200 dark:border-phdark-800 px-3 sm:px-6 flex items-center justify-between transition-colors shadow-xs">
       {/* Left section: Mobile menu & Live PST Clock */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         <button
           onClick={onToggleMobileMenu}
-          className="p-2 -ml-1 text-slate-600 dark:text-slate-300 hover:text-brand-dark dark:hover:text-white rounded-lg lg:hidden"
+          className="p-1.5 sm:p-2 -ml-1 text-slate-600 dark:text-slate-300 hover:text-brand-dark dark:hover:text-white rounded-lg lg:hidden"
           aria-label="Toggle navigation menu"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         {/* Mobile Logo Brand */}
-        <div className="flex items-center gap-2 lg:hidden">
-          <div className="w-8 h-8 rounded-full overflow-hidden border border-gold/70 bg-white shrink-0 p-0.5 shadow-xs">
+        <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-gold/70 bg-white shrink-0 p-0.5 shadow-xs">
             <img
               src="/barangay-logo.jpg"
               alt="Barangay Seal"
               className="w-full h-full object-cover rounded-full"
             />
           </div>
-          <span className="font-bold text-xs text-slate-800 dark:text-white truncate">
+          <span className="font-bold text-xs text-slate-800 dark:text-white truncate max-w-[100px] xs:max-w-none">
             Brgy. Cantaongon
           </span>
         </div>
@@ -129,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         {/* Notifications Popover */}
         <div className="relative">
           <button
@@ -240,16 +240,16 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="h-6 w-px bg-slate-200 dark:bg-phdark-700 hidden sm:block" />
 
         {/* Role & Secretary Auth Section */}
-        <div className="flex items-center gap-2 pl-1">
+        <div className="flex items-center gap-1.5 sm:gap-2 pl-0.5 sm:pl-1 shrink-0">
           {userRole === 'admin' ? (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
               {currentUser.name ? (
                 <button
                   onClick={() => setIsProfileModalOpen(true)}
-                  className="flex items-center gap-2 p-1 sm:pr-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-phdark-800 border border-transparent hover:border-slate-200 dark:hover:border-phdark-700 transition-all cursor-pointer group text-left"
+                  className="flex items-center gap-1.5 sm:gap-2 p-1 sm:pr-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-phdark-800 border border-transparent hover:border-slate-200 dark:hover:border-phdark-700 transition-all cursor-pointer group text-left shrink-0"
                   title="Click to edit Secretary profile"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-brand-primary text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:ring-2 ring-gold/60 transition-all">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-brand-primary text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:ring-2 ring-gold/60 transition-all shrink-0">
                     {getInitials(currentUser.name)}
                   </div>
                   <div className="text-left hidden sm:block">
@@ -267,27 +267,30 @@ export const Header: React.FC<HeaderProps> = ({
               ) : (
                 <button
                   onClick={() => setIsProfileModalOpen(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-dashed border-accent/60 bg-accent/5 hover:bg-accent/15 text-accent dark:text-accent-light transition-all cursor-pointer group shadow-xs animate-pulse hover:animate-none"
+                  className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl border border-dashed border-accent/60 bg-accent/5 hover:bg-accent/15 text-accent dark:text-accent-light transition-all cursor-pointer group shadow-xs shrink-0"
                   title="Click to input the Barangay Secretary details"
                 >
-                  <div className="w-6 h-6 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-110 transition-transform">
-                    <UserPlus className="w-3.5 h-3.5" />
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+                    <UserPlus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold leading-tight">
+                  <div className="text-left hidden sm:block">
+                    <p className="text-xs font-bold leading-tight whitespace-nowrap">
                       + Set Secretary Profile
                     </p>
-                    <p className="text-[9px] text-slate-500 dark:text-slate-400 hidden sm:block">
+                    <p className="text-[9px] text-slate-500 dark:text-slate-400">
                       Syncs to all devices
                     </p>
                   </div>
+                  <span className="text-[11px] font-bold text-accent sm:hidden whitespace-nowrap">
+                    Profile
+                  </span>
                 </button>
               )}
 
               {/* Lock Button to return to Public Viewer mode */}
               <button
                 onClick={lockAdmin}
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0"
                 title="Lock admin controls (Switch to Public Viewer Mode)"
               >
                 <Lock className="w-4 h-4" />

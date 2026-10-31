@@ -70,6 +70,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ onOpenAddModal }) =>
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [selectedVenue, setSelectedVenue] = useState<string>('All');
 
+  // Selected day for mobile schedule inspection
+  const [selectedDayDateStr, setSelectedDayDateStr] = useState<string>(() => {
+    if (calendarDate) return calendarDate;
+    if (events.length > 0) return events[0].date;
+    return '2026-11-05';
+  });
+
   // Selected event modal state
   const [selectedEvent, setSelectedEvent] = useState<BarangayEvent | null>(null);
 
@@ -436,7 +443,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ onOpenAddModal }) =>
             <span>SAT</span>
           </div>
 
-          {/* Day Cells Grid with Thickened Outlines (White in Dark Mode) */}
+          {/* Day Cells Grid with Thickened Outlines */}
           <div className="grid grid-cols-7 auto-rows-fr bg-slate-300 dark:bg-white/30 gap-[2px]">
             {monthGridDays.map((cell, idx) => {
               const dayEvents = filteredEvents.filter(e => e.date === cell.dateStr);
@@ -444,23 +451,28 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ onOpenAddModal }) =>
               return (
                 <div
                   key={idx}
-                  className={`min-h-[115px] sm:min-h-[130px] p-1.5 sm:p-2 flex flex-col justify-between transition-all ${
+                  onClick={() => setSelectedDayDateStr(cell.dateStr)}
+                  className={`min-h-[56px] sm:min-h-[125px] p-1 sm:p-2 flex flex-col justify-between transition-all cursor-pointer ${
                     !cell.isCurrentMonth
                       ? 'bg-slate-100/70 dark:bg-phdark-950/70 text-slate-400 dark:text-slate-600'
                       : 'bg-white dark:bg-phdark-900 text-slate-800 dark:text-slate-100 hover:bg-blue-50/30 dark:hover:bg-phdark-850/50'
                   } ${
-                    cell.isToday
-                      ? 'ring-2 sm:ring-[3px] ring-inset ring-brand-primary bg-blue-50/40 dark:bg-brand-navy/30'
+                    cell.dateStr === selectedDayDateStr
+                      ? 'ring-2 sm:ring-[3px] ring-inset ring-brand-primary bg-blue-50/50 dark:bg-brand-navy/40 shadow-xs'
+                      : cell.isToday
+                      ? 'ring-2 ring-inset ring-amber-500 bg-amber-50/30 dark:bg-amber-950/20'
                       : cell.isCurrentMonth
-                      ? 'ring-1.5 sm:ring-2 ring-inset ring-slate-300 dark:ring-white/30 hover:ring-brand-primary/60'
+                      ? 'ring-1 sm:ring-2 ring-inset ring-slate-200 dark:ring-white/20'
                       : ''
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span
-                      className={`text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center ${
-                        cell.isToday
+                      className={`text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${
+                        cell.dateStr === selectedDayDateStr
                           ? 'bg-brand-primary text-white shadow-xs'
+                          : cell.isToday
+                          ? 'bg-amber-500 text-white shadow-xs'
                           : cell.isCurrentMonth
                           ? 'text-slate-700 dark:text-slate-300'
                           : 'text-slate-400 dark:text-slate-600'
@@ -469,21 +481,24 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ onOpenAddModal }) =>
                       {cell.dayNumber}
                     </span>
                     {dayEvents.length > 0 && (
-                      <span className="text-[10px] font-semibold text-slate-400">
+                      <span className="hidden sm:inline text-[10px] font-semibold text-slate-400">
                         {dayEvents.length} ev
                       </span>
                     )}
                   </div>
 
-                  {/* Events list inside cell */}
-                  <div className="space-y-1 my-1 overflow-hidden">
+                  {/* Desktop: Full event pills */}
+                  <div className="hidden sm:block space-y-1 my-1 overflow-hidden">
                     {dayEvents.slice(0, 3).map(event => {
                       const typeClass = getTypeBadgeStyles(event.type);
 
                       return (
                         <div
                           key={event.id}
-                          onClick={() => setSelectedEvent(event)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedEvent(event);
+                          }}
                           title={`${event.title} (${event.startTime} - ${event.endTime})`}
                           className={`px-1.5 py-0.5 rounded text-[10px] font-semibold truncate cursor-pointer shadow-2xs hover:opacity-90 transition-opacity ${typeClass}`}
                         >
@@ -494,7 +509,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ onOpenAddModal }) =>
                     })}
                     {dayEvents.length > 3 && (
                       <div
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setCurrentDate(new Date(cell.dateStr));
                           setViewMode('day');
                         }}
@@ -505,10 +521,76 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ onOpenAddModal }) =>
                     )}
                   </div>
 
-                  <div className="h-1" />
+                  {/* Mobile: Clean dots badge so 7 columns look beautiful on phones */}
+                  {dayEvents.length > 0 && (
+                    <div className="flex sm:hidden items-center justify-center gap-1 mt-0.5">
+                      {dayEvents.slice(0, 3).map((event, i) => (
+                        <span
+                          key={i}
+                          className="w-1.5 h-1.5 rounded-full bg-accent"
+                        />
+                      ))}
+                      {dayEvents.length > 3 && (
+                        <span className="text-[8px] font-bold text-accent">+</span>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="h-0.5" />
                 </div>
               );
             })}
+          </div>
+
+          {/* Mobile Selected Date Schedule Drawer */}
+          <div className="sm:hidden border-t-2 border-slate-200 dark:border-phdark-800 p-4 bg-slate-50 dark:bg-phdark-850 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-brand-primary dark:text-blue-400" />
+                <h4 className="text-xs font-black text-slate-900 dark:text-white">
+                  Schedule: {selectedDayDateStr}
+                </h4>
+              </div>
+              <span className="text-[10px] font-bold bg-white dark:bg-phdark-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-phdark-700 text-slate-600 dark:text-slate-300">
+                {filteredEvents.filter(e => e.date === selectedDayDateStr).length} event(s)
+              </span>
+            </div>
+
+            {filteredEvents.filter(e => e.date === selectedDayDateStr).length === 0 ? (
+              <p className="text-xs text-slate-400 py-2.5 text-center italic bg-white dark:bg-phdark-900 rounded-xl border border-slate-200/60 dark:border-phdark-800">
+                No events scheduled on this day. Tap another date above.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {filteredEvents
+                  .filter(e => e.date === selectedDayDateStr)
+                  .map(event => (
+                    <div
+                      key={event.id}
+                      onClick={() => setSelectedEvent(event)}
+                      className="p-3 rounded-xl border border-slate-200 dark:border-phdark-700 bg-white dark:bg-phdark-900 shadow-2xs hover:shadow-xs transition-all cursor-pointer flex items-center justify-between gap-3"
+                    >
+                      <div className="min-w-0">
+                        <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase mb-1 ${getTypeBadgeStyles(event.type)}`}>
+                          {event.type}
+                        </span>
+                        <p className="text-xs font-black text-slate-900 dark:text-white truncate">
+                          {event.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5 truncate">
+                          <Clock className="w-3 h-3 shrink-0" />
+                          <span>{event.startTime} - {event.endTime}</span>
+                          <span>•</span>
+                          <span className="truncate">{event.venue}</span>
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-bold text-brand-primary dark:text-blue-400 bg-brand-lighter/50 dark:bg-brand-navy/30 px-2 py-1 rounded-lg shrink-0">
+                        View →
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
           </div>
         </div>
       )}
