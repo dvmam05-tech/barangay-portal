@@ -279,17 +279,17 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setIsProfileModalOpen(true)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-dashed border-accent/60 bg-accent/5 hover:bg-accent/15 text-accent dark:text-accent-light transition-all cursor-pointer group shadow-xs animate-pulse hover:animate-none"
-              title="Click to input the actual user of this website"
+              title="Click to input the Barangay Secretary details"
             >
               <div className="w-6 h-6 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-110 transition-transform">
                 <UserPlus className="w-3.5 h-3.5" />
               </div>
               <div className="text-left">
                 <p className="text-xs font-bold leading-tight">
-                  + Input Actual User
+                  + Set Secretary Profile
                 </p>
                 <p className="text-[9px] text-slate-500 dark:text-slate-400 hidden sm:block">
-                  Click to set your name
+                  Syncs to all devices
                 </p>
               </div>
             </button>

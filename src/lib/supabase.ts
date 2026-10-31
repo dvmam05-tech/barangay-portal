@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { BarangayEvent, EventType, EventStatus, Venue, FacilityReservation, ReservationStatus } from '../types';
+import type { BarangayEvent, EventType, EventStatus, Venue, FacilityReservation, ReservationStatus, UserProfile } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://fukitggodloawskrjkjx.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_OkvjZJUCGoJT7Y332lMrEQ_RNEEuiZy';
@@ -356,6 +356,75 @@ export const deleteReservationFromSupabase = async (id: string): Promise<boolean
     return true;
   } catch (err) {
     console.error('Supabase delete reservation error:', err);
+    return false;
+  }
+};
+
+// ==========================================
+// SECRETARY & OFFICIAL PROFILE (SUPABASE)
+// ==========================================
+
+export interface SupabaseAdminProfileRow {
+  id: string;
+  name: string;
+  title: string;
+  email: string | null;
+  contact_number: string | null;
+  updated_at: string;
+}
+
+export const fetchAdminProfileFromSupabase = async (): Promise<UserProfile | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('admin_profile')
+      .select('*')
+      .eq('id', 'primary')
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Supabase admin profile notice:', error.message);
+      return null;
+    }
+
+    if (!data) return null;
+
+    return {
+      name: data.name || '',
+      title: data.title || 'Barangay Secretary',
+      email: data.email || '',
+      contactNumber: data.contact_number || '',
+    };
+  } catch (err) {
+    console.warn('Supabase profile fetch error:', err);
+    return null;
+  }
+};
+
+export const saveAdminProfileToSupabase = async (
+  profile: UserProfile
+): Promise<boolean> => {
+  try {
+    const payload = {
+      id: 'primary',
+      name: profile.name,
+      title: profile.title || 'Barangay Secretary',
+      email: profile.email || '',
+      contact_number: profile.contactNumber || '',
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from('admin_profile')
+      .upsert(payload, { onConflict: 'id' });
+
+    if (error) {
+      console.error('Failed to save profile to Supabase:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Supabase profile save error:', err);
     return false;
   }
 };

@@ -24,7 +24,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
   const { currentUser, updateCurrentUser } = useApp();
 
   const [name, setName] = useState('');
-  const [title, setTitle] = useState('Executive Secretariat');
+  const [title, setTitle] = useState('Barangay Secretary');
   const [isCustomPosition, setIsCustomPosition] = useState(false);
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
@@ -33,10 +33,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
   useEffect(() => {
     if (isOpen) {
       setName(currentUser.name || '');
-      const userTitle = currentUser.title || 'Executive Secretariat';
+      const userTitle = currentUser.title || 'Barangay Secretary';
       setTitle(userTitle);
       const isStandard = STANDARD_POSITIONS.slice(0, -1).includes(userTitle);
-      setIsCustomPosition(!isStandard && !!userTitle && userTitle !== 'Barangay Official');
+      setIsCustomPosition(!isStandard && !!userTitle && userTitle !== 'Barangay Secretary');
       setEmail(currentUser.email || '');
       setContactNumber(currentUser.contactNumber || '');
     }
@@ -48,7 +48,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
     e.preventDefault();
     updateCurrentUser({
       name: name.trim(),
-      title: title.trim() || 'Barangay Official',
+      title: title.trim() || 'Barangay Secretary',
       email: email.trim(),
       contactNumber: contactNumber.trim(),
     });
@@ -57,13 +57,13 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
 
   const handleClear = () => {
     setName('');
-    setTitle('Barangay Official');
+    setTitle('Barangay Secretary');
     setIsCustomPosition(false);
     setEmail('');
     setContactNumber('');
     updateCurrentUser({
       name: '',
-      title: 'Barangay Official',
+      title: 'Barangay Secretary',
       email: '',
       contactNumber: '',
     });
@@ -85,8 +85,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold tracking-tight">Official User Profile</h3>
-              <p className="text-xs text-slate-300">Set the actual user identity for this website</p>
+              <h3 className="text-base font-extrabold tracking-tight">Barangay Secretary Profile</h3>
+              <p className="text-xs text-slate-300">Cloud-synced identity. Automatically shares across all your devices.</p>
             </div>
           </div>
           <button

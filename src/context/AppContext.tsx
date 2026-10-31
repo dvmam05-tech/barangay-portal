@@ -29,6 +29,8 @@ import {
   fetchReservationsFromSupabase,
   insertReservationToSupabase,
   updateReservationInSupabase,
+  fetchAdminProfileFromSupabase,
+  saveAdminProfileToSupabase,
 } from '../lib/supabase';
 
 export interface ToastMessage {
@@ -201,7 +203,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Database Connection (Supabase Cloud PostgreSQL)
   const [isSupabaseConnected, setIsSupabaseConnected] = useState<boolean>(false);
 
-  // Sync Activities & Reservations with Supabase on mount & listen to live changes
+  // Sync Activities, Reservations & Secretary Profile with Supabase on mount & listen to live changes
   useEffect(() => {
     let isMounted = true;
 
@@ -234,11 +236,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           console.error(e);
         }
       }
+
+      // 3. Secretary / Official Profile (Cloud Sync)
+      const remoteProfile = await fetchAdminProfileFromSupabase();
+      if (remoteProfile && remoteProfile.name && isMounted) {
+        setCurrentUser(remoteProfile);
+        try {
+          localStorage.setItem('barangay_current_user', JSON.stringify(remoteProfile));
+        } catch (e) {
+          console.error(e);
+        }
+      }
     };
 
     loadSupabaseData();
 
-    // Subscribe to live database changes for activities and reservations
+    // Subscribe to live database changes for activities, reservations, and secretary profile
     const channel = supabase
       .channel('realtime:barangay_portal')
       .on(
@@ -271,6 +284,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         }
       )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'admin_profile' },
+        async () => {
+          const fresh = await fetchAdminProfileFromSupabase();
+          if (fresh && fresh.name && isMounted) {
+            setCurrentUser(fresh);
+            try {
+              localStorage.setItem('barangay_current_user', JSON.stringify(fresh));
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        }
+      )
       .subscribe();
 
     return () => {
@@ -291,7 +319,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return {
       name: '',
-      title: 'Barangay Official',
+      title: 'Barangay Secretary',
       email: '',
       contactNumber: '',
     };
@@ -304,14 +332,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (e) {
       console.error(e);
     }
+
+    // Save to Supabase Cloud Database (sync across all devices)
+    if (isSupabaseConfigured) {
+      saveAdminProfileToSupabase(profile);
+    }
+
     addToast({
       type: 'success',
-      title: 'Official Profile Saved',
+      title: 'Secretary Profile Saved & Synced',
       message: profile.name.trim() 
-        ? `Active portal user set to ${profile.name} (${profile.title})` 
+        ? `Portal identity updated across all devices: ${profile.name} (${profile.title})` 
         : 'User profile cleared.',
     });
-    logAction('System', 'UPDATE', `Active user profile set to: ${profile.name.trim() || 'Official'} (${profile.title})`);
+    logAction('System', 'UPDATE', `Active user profile set to: ${profile.name.trim() || 'Barangay Secretary'} (${profile.title})`);
   };
 
   const [meetings, setMeetings] = useState<CouncilMeeting[]>(() => {
