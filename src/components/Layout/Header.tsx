@@ -130,23 +130,6 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right controls */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Quick Action Buttons */}
-        <button
-          onClick={onOpenNewEventModal}
-          className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-primary hover:bg-brand-navy text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-        >
-          <Calendar className="w-3.5 h-3.5" />
-          <span>+ Add Event</span>
-        </button>
-
-        <button
-          onClick={onOpenNewReservationModal}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent hover:bg-accent-dark text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-        >
-          <Building2 className="w-3.5 h-3.5" />
-          <span>+ Book Facility</span>
-        </button>
-
         {/* Notifications Popover */}
         <div className="relative">
           <button

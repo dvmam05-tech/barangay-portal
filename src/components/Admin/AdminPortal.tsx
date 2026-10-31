@@ -21,7 +21,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onOpenBookingModal,
   onOpenNewEventModal,
 }) => {
-  const { activeTab, setActiveTab, reservations, isSupabaseConnected } = useApp();
+  const { activeTab, setActiveTab, reservations, isSupabaseConnected, userRole } = useApp();
   const pendingReservations = reservations.filter(r => r.status === 'Pending');
 
   return (
@@ -65,35 +65,33 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             </div>
           </div>
 
-          {/* Right: Quick Action Controls */}
+          {/* Right: Clean, Non-Duplicated Action Controls */}
           <div className="flex flex-wrap items-center gap-2.5 self-start lg:self-center shrink-0">
-            <button
-              onClick={onOpenNewEventModal}
-              className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-dark text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>New Official Event</span>
-            </button>
+            {userRole === 'admin' ? (
+              <>
+                <button
+                  onClick={onOpenNewEventModal}
+                  className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-dark text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>+ New Official Event</span>
+                </button>
 
-            <button
-              onClick={() => onOpenBookingModal()}
-              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold backdrop-blur-xs transition-all flex items-center gap-2 cursor-pointer border border-white/10"
-            >
-              <Building2 className="w-4 h-4 text-gold" />
-              <span>Reserve Facility</span>
-            </button>
-
-            {activeTab !== 'reservations' && (
+                <button
+                  onClick={() => onOpenBookingModal()}
+                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold backdrop-blur-xs transition-all flex items-center gap-2 cursor-pointer border border-white/10"
+                >
+                  <Building2 className="w-4 h-4 text-gold" />
+                  <span>Book Facility</span>
+                </button>
+              </>
+            ) : (
               <button
-                onClick={() => setActiveTab('reservations')}
-                className="px-3.5 py-2.5 rounded-xl bg-brand-primary/50 hover:bg-brand-primary text-white text-xs font-bold transition-all flex items-center gap-2 cursor-pointer border border-brand-primary/60"
+                onClick={() => onOpenBookingModal()}
+                className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-dark text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
               >
-                <span>Facility Approvals</span>
-                {pendingReservations.length > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-accent text-white font-black">
-                    {pendingReservations.length}
-                  </span>
-                )}
+                <Building2 className="w-4 h-4 text-white" />
+                <span>+ Request Facility Booking</span>
               </button>
             )}
           </div>
