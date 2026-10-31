@@ -310,7 +310,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => setIsAuthModalOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gold hover:bg-gold-light text-brand-darkest text-xs font-black transition-all cursor-pointer border border-gold/40 shadow-xs"
-                title="Click to enter PIN 1234 for Admin / Secretary Mode"
+                title="Authorized Admin & Secretary Login"
               >
                 <KeyRound className="w-3.5 h-3.5 text-brand-darkest" />
                 <span>Admin Login</span>

@@ -83,9 +83,6 @@ export const AuthModal: React.FC = () => {
               />
               <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
-            <p className="text-[11px] text-center text-slate-400 font-medium pt-1">
-              Official PIN: <span className="font-mono font-bold text-brand-primary dark:text-gold">1234</span>
-            </p>
             {errorMsg && (
               <p className="text-xs text-rose-500 font-bold text-center mt-1 animate-shake">
                 {errorMsg}
