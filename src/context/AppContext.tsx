@@ -26,6 +26,9 @@ import {
   insertActivityToSupabase,
   updateActivityInSupabase,
   deleteActivityFromSupabase,
+  fetchReservationsFromSupabase,
+  insertReservationToSupabase,
+  updateReservationInSupabase,
 } from '../lib/supabase';
 
 export interface ToastMessage {
@@ -198,12 +201,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Database Connection (Supabase Cloud PostgreSQL)
   const [isSupabaseConnected, setIsSupabaseConnected] = useState<boolean>(false);
 
-  // Sync Activities with Supabase on mount & listen to live changes
+  // Sync Activities & Reservations with Supabase on mount & listen to live changes
   useEffect(() => {
     let isMounted = true;
 
-    const loadSupabaseActivities = async () => {
+    const loadSupabaseData = async () => {
       if (!isSupabaseConfigured) return;
+
+      // 1. Activities
       const remoteActivities = await fetchActivitiesFromSupabase();
       if (remoteActivities && isMounted) {
         setEvents(remoteActivities);
@@ -217,13 +222,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           console.error(e);
         }
       }
+
+      // 2. Reservations
+      const remoteReservations = await fetchReservationsFromSupabase();
+      if (remoteReservations && isMounted) {
+        setReservations(remoteReservations);
+        setIsSupabaseConnected(true);
+        try {
+          localStorage.setItem('barangay_reservations', JSON.stringify(remoteReservations));
+        } catch (e) {
+          console.error(e);
+        }
+      }
     };
 
-    loadSupabaseActivities();
+    loadSupabaseData();
 
-    // Subscribe to live database changes
+    // Subscribe to live database changes for activities and reservations
     const channel = supabase
-      .channel('realtime:activities')
+      .channel('realtime:barangay_portal')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'activities' },
@@ -233,6 +250,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setEvents(fresh);
             try {
               localStorage.setItem('barangay_events', JSON.stringify(fresh));
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'reservations' },
+        async () => {
+          const fresh = await fetchReservationsFromSupabase();
+          if (fresh && isMounted) {
+            setReservations(fresh);
+            try {
+              localStorage.setItem('barangay_reservations', JSON.stringify(fresh));
             } catch (e) {
               console.error(e);
             }
@@ -573,6 +605,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       message: `Reference No: ${refNum}. Your application is queued for Barangay Admin evaluation.`,
     });
 
+    // Save to Supabase Cloud Database
+    if (isSupabaseConfigured) {
+      insertReservationToSupabase(newRes).then(savedRes => {
+        if (savedRes) {
+          setReservations(prev => prev.map(r => (r.id === newRes.id ? savedRes : r)));
+        }
+      });
+    }
+
     return { success: true, reservation: newRes };
   };
 
@@ -640,6 +681,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       target.id
     );
 
+    // 4. Update Supabase Cloud Database (Reservations & Calendar)
+    if (isSupabaseConfigured) {
+      updateReservationInSupabase(id, {
+        status: 'Approved',
+        adminRemarks: adminRemarks || 'Approved according to Barangay Facility Ordinance.',
+        reviewedBy,
+        reviewedAt,
+      });
+      insertActivityToSupabase(newCalendarEvent, reviewedBy);
+    }
+
     addToast({
       type: 'success',
       title: 'Reservation Approved & Synced',
@@ -673,6 +725,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // If there was a calendar event linked, cancel it
     setEvents(prev => prev.filter(e => e.sourceReservationId !== id));
 
+    // Update Supabase Cloud Database
+    if (isSupabaseConfigured) {
+      updateReservationInSupabase(id, {
+        status: 'Declined',
+        adminRemarks: reason || 'Application declined by Barangay Administration.',
+        reviewedBy,
+        reviewedAt,
+      });
+      deleteActivityFromSupabase('evt-res-' + id);
+    }
+
     logAction('Reservations', 'DECLINE', `Declined reservation ${target.referenceNumber} for "${target.organizationName}". Reason: ${reason}`, target.id);
     addToast({
       type: 'warning',
@@ -689,6 +752,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       prev.map(r => (r.id === id ? { ...r, status: 'Cancelled' } : r))
     );
     setEvents(prev => prev.filter(e => e.sourceReservationId !== id));
+
+    // Update Supabase Cloud Database
+    if (isSupabaseConfigured) {
+      updateReservationInSupabase(id, {
+        status: 'Cancelled',
+      });
+      deleteActivityFromSupabase('evt-res-' + id);
+    }
 
     logAction('Reservations', 'CANCEL', `Reservation ${target.referenceNumber} was cancelled by applicant.`, target.id);
     addToast({
