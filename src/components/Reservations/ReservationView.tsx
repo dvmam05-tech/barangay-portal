@@ -23,7 +23,6 @@ import {
   SunMedium,
   Moon,
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { FacilityPermitModal } from './FacilityPermitModal';
 
 interface ReservationViewProps {
@@ -368,13 +367,6 @@ export const ReservationView: React.FC<ReservationViewProps> = ({ onOpenBookingM
     approveReservation(approvingRes.id, approvalRemarks);
     setApprovingRes(null);
     setApprovalRemarks('');
-
-    confetti({
-      particleCount: 70,
-      spread: 60,
-      origin: { y: 0.7 },
-      colors: ['#1a468e', '#dc2626', '#f59e0b', '#2563eb'],
-    });
   };
 
   const handleDeclineConfirm = () => {
