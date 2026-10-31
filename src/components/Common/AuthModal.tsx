@@ -46,7 +46,7 @@ export const AuthModal: React.FC = () => {
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold tracking-tight">Secretary Login</h3>
+              <h3 className="text-base font-extrabold tracking-tight">Admin / Secretary Login</h3>
               <p className="text-xs text-slate-300">Barangay Cantaongon Portal</p>
             </div>
           </div>
@@ -61,12 +61,12 @@ export const AuthModal: React.FC = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed text-center">
-            Enter the 4-digit PIN to unlock event scheduling, approvals, and official portal management.
+            Enter the 4-digit PIN to switch this device to Admin Mode for event scheduling, approvals, and portal management.
           </p>
 
           <div className="space-y-1.5">
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 text-center uppercase tracking-wider">
-              Secretary Passcode
+              Admin Passcode
             </label>
             <div className="relative max-w-[200px] mx-auto">
               <input
@@ -83,6 +83,9 @@ export const AuthModal: React.FC = () => {
               />
               <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
+            <p className="text-[11px] text-center text-slate-400 font-medium pt-1">
+              Official PIN: <span className="font-mono font-bold text-brand-primary dark:text-gold">1234</span>
+            </p>
             {errorMsg && (
               <p className="text-xs text-rose-500 font-bold text-center mt-1 animate-shake">
                 {errorMsg}

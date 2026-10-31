@@ -5,7 +5,7 @@ import { ReservationView } from '../Reservations/ReservationView';
 import { CalendarView } from '../Calendar/CalendarView';
 import { AuditLogView } from '../AuditLog/AuditLogView';
 import type { Venue } from '../../types';
-import { Building2, PlusCircle } from 'lucide-react';
+import { Building2, PlusCircle, KeyRound } from 'lucide-react';
 
 interface AdminPortalProps {
   onOpenBookingModal: (preset?: {
@@ -21,7 +21,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onOpenBookingModal,
   onOpenNewEventModal,
 }) => {
-  const { activeTab, setActiveTab, reservations, isSupabaseConnected, userRole } = useApp();
+  const { activeTab, setActiveTab, reservations, isSupabaseConnected, userRole, setIsAuthModalOpen } = useApp();
   const pendingReservations = reservations.filter(r => r.status === 'Pending');
 
   return (
@@ -86,13 +86,23 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => onOpenBookingModal()}
-                className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-dark text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <Building2 className="w-4 h-4 text-white" />
-                <span>+ Request Facility Booking</span>
-              </button>
+              <>
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-gold hover:bg-gold-light text-brand-darkest text-xs font-black shadow-md transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <KeyRound className="w-4 h-4 text-brand-darkest" />
+                  <span>Admin Login</span>
+                </button>
+
+                <button
+                  onClick={() => onOpenBookingModal()}
+                  className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-dark text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Building2 className="w-4 h-4 text-white" />
+                  <span>+ Request Facility Booking</span>
+                </button>
+              </>
             )}
           </div>
         </div>

@@ -181,10 +181,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenHelp, isOpenMobile, onCl
                   setIsAuthModalOpen(true);
                   onCloseMobile();
                 }}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl font-bold text-xs bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 transition-all cursor-pointer shadow-xs"
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-black text-xs bg-gold/15 hover:bg-gold/25 text-gold border border-gold/40 transition-all cursor-pointer shadow-xs"
               >
-                <KeyRound className="w-4 h-4" />
-                <span>Secretary Login</span>
+                <div className="flex items-center gap-2.5">
+                  <KeyRound className="w-4 h-4" />
+                  <span>Admin / Secretary Login</span>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-gold/20 text-gold px-1.5 py-0.5 rounded-md">
+                  PIN: 1234
+                </span>
               </button>
             </div>
           )}

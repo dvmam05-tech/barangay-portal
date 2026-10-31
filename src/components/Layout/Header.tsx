@@ -115,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Center: Search input */}
-      <div className="flex-1 max-w-md mx-3 sm:mx-6">
+      <div className="flex-1 max-w-md mx-3 sm:mx-6 hidden md:block">
         <div className="relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -309,11 +309,11 @@ export const Header: React.FC<HeaderProps> = ({
               )}
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-phdark-800 dark:hover:bg-phdark-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer border border-slate-200 dark:border-phdark-700 shadow-2xs hover:border-brand-primary/40"
-                title="Click to enter PIN 1234 for Secretary Access"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gold hover:bg-gold-light text-brand-darkest text-xs font-black transition-all cursor-pointer border border-gold/40 shadow-xs"
+                title="Click to enter PIN 1234 for Admin / Secretary Mode"
               >
-                <KeyRound className="w-3.5 h-3.5 text-brand-primary dark:text-gold" />
-                <span>Secretary Login</span>
+                <KeyRound className="w-3.5 h-3.5 text-brand-darkest" />
+                <span>Admin Login</span>
               </button>
             </div>
           )}
