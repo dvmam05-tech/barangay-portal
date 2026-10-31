@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp, getInitials } from '../../context/AppContext';
 import { UserProfileModal } from '../Common/UserProfileModal';
+import { AuthModal } from '../Common/AuthModal';
 import {
   Menu,
   Moon,
@@ -37,6 +38,9 @@ export const Header: React.FC<HeaderProps> = ({
     setSearchQuery,
     setActiveTab,
     navigateToEventInCalendar,
+    userRole,
+    lockAdmin,
+    setIsAuthModalOpen,
   } = useApp();
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -252,47 +256,83 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-6 w-px bg-slate-200 dark:bg-phdark-700 hidden sm:block" />
 
-        {/* Official Identity Chip / Set User Button */}
+        {/* Role & Secretary Auth Section */}
         <div className="flex items-center gap-2 pl-1">
-          {currentUser.name ? (
-            <button
-              onClick={() => setIsProfileModalOpen(true)}
-              className="flex items-center gap-2 p-1 sm:pr-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-phdark-800 border border-transparent hover:border-slate-200 dark:hover:border-phdark-700 transition-all cursor-pointer group text-left"
-              title="Click to edit active official user profile"
-            >
-              <div className="w-8 h-8 rounded-xl bg-brand-primary text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:ring-2 ring-gold/60 transition-all">
-                {getInitials(currentUser.name)}
-              </div>
-              <div className="text-left hidden sm:block">
-                <div className="flex items-center gap-1">
-                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 leading-tight">
-                    {currentUser.name}
-                  </p>
-                  <Edit3 className="w-2.5 h-2.5 text-slate-400 group-hover:text-brand-primary transition-colors" />
-                </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[140px]">
-                  {currentUser.title || 'Barangay Official'}
-                </p>
-              </div>
-            </button>
+          {userRole === 'admin' ? (
+            <div className="flex items-center gap-1.5">
+              {currentUser.name ? (
+                <button
+                  onClick={() => setIsProfileModalOpen(true)}
+                  className="flex items-center gap-2 p-1 sm:pr-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-phdark-800 border border-transparent hover:border-slate-200 dark:hover:border-phdark-700 transition-all cursor-pointer group text-left"
+                  title="Click to edit Secretary profile"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-brand-primary text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:ring-2 ring-gold/60 transition-all">
+                    {getInitials(currentUser.name)}
+                  </div>
+                  <div className="text-left hidden sm:block">
+                    <div className="flex items-center gap-1">
+                      <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 leading-tight">
+                        {currentUser.name}
+                      </p>
+                      <Edit3 className="w-2.5 h-2.5 text-slate-400 group-hover:text-brand-primary transition-colors" />
+                    </div>
+                    <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold truncate max-w-[140px]">
+                      ● Secretary Mode
+                    </p>
+                  </div>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsProfileModalOpen(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-dashed border-accent/60 bg-accent/5 hover:bg-accent/15 text-accent dark:text-accent-light transition-all cursor-pointer group shadow-xs animate-pulse hover:animate-none"
+                  title="Click to input the Barangay Secretary details"
+                >
+                  <div className="w-6 h-6 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-110 transition-transform">
+                    <UserPlus className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xs font-bold leading-tight">
+                      + Set Secretary Profile
+                    </p>
+                    <p className="text-[9px] text-slate-500 dark:text-slate-400 hidden sm:block">
+                      Syncs to all devices
+                    </p>
+                  </div>
+                </button>
+              )}
+
+              {/* Lock Button to return to Public Viewer mode */}
+              <button
+                onClick={lockAdmin}
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                title="Lock admin controls (Switch to Public Viewer Mode)"
+              >
+                <Lock className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
-            <button
-              onClick={() => setIsProfileModalOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-dashed border-accent/60 bg-accent/5 hover:bg-accent/15 text-accent dark:text-accent-light transition-all cursor-pointer group shadow-xs animate-pulse hover:animate-none"
-              title="Click to input the Barangay Secretary details"
-            >
-              <div className="w-6 h-6 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-110 transition-transform">
-                <UserPlus className="w-3.5 h-3.5" />
-              </div>
-              <div className="text-left">
-                <p className="text-xs font-bold leading-tight">
-                  + Set Secretary Profile
-                </p>
-                <p className="text-[9px] text-slate-500 dark:text-slate-400 hidden sm:block">
-                  Syncs to all devices
-                </p>
-              </div>
-            </button>
+            <div className="flex items-center gap-2">
+              {currentUser.name && (
+                <div className="hidden md:flex items-center gap-2 pr-1 text-right">
+                  <div>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">
+                      Barangay Secretary
+                    </p>
+                    <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                      {currentUser.name}
+                    </p>
+                  </div>
+                </div>
+              )}
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-phdark-800 dark:hover:bg-phdark-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer border border-slate-200 dark:border-phdark-700 shadow-2xs hover:border-brand-primary/40"
+                title="Click to enter PIN 1234 for Secretary Access"
+              >
+                <KeyRound className="w-3.5 h-3.5 text-brand-primary dark:text-gold" />
+                <span>Secretary Login</span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -301,6 +341,9 @@ export const Header: React.FC<HeaderProps> = ({
           isOpen={isProfileModalOpen}
           onClose={() => setIsProfileModalOpen(false)}
         />
+
+        {/* Secretary PIN Auth Modal */}
+        <AuthModal />
       </div>
     </header>
   );

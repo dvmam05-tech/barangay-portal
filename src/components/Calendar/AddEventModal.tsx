@@ -9,7 +9,7 @@ interface AddEventModalProps {
 }
 
 export const AddEventModal: React.FC<AddEventModalProps> = ({ isOpen, onClose }) => {
-  const { addEvent, checkConflict } = useApp();
+  const { addEvent, checkConflict, userRole } = useApp();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -23,7 +23,7 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({ isOpen, onClose })
   const [status, setStatus] = useState<EventStatus>('Approved');
   const [expectedAttendees, setExpectedAttendees] = useState(100);
 
-  if (!isOpen) return null;
+  if (!isOpen || userRole !== 'admin') return null;
 
   // Live conflict evaluation
   const conflict = checkConflict(venue, date, startTime, endTime);

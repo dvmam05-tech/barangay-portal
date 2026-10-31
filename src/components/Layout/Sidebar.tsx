@@ -8,6 +8,8 @@ import {
   HelpCircle,
   RotateCcw,
   Shield,
+  Lock,
+  KeyRound,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -22,38 +24,61 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenHelp, isOpenMobile, onCl
     setActiveTab,
     reservations,
     resetToDefaultData,
+    userRole,
+    setIsAuthModalOpen,
   } = useApp();
 
   const pendingReservationsCount = reservations.filter(r => r.status === 'Pending').length;
 
-  // Dedicated Navigation Items for Barangay Administration
-  const adminNavItems = [
-    {
-      id: 'dashboard' as const,
-      label: 'Executive Dashboard',
-      icon: LayoutDashboard,
-      badge: null,
-    },
-    {
-      id: 'reservations' as const,
-      label: 'Facility Approvals',
-      icon: Building2,
-      badge: pendingReservationsCount > 0 ? pendingReservationsCount : null,
-      badgeColor: 'bg-accent text-white animate-pulse',
-    },
-    {
-      id: 'calendar' as const,
-      label: 'Calendar Manager',
-      icon: CalendarDays,
-      badge: null,
-    },
-    {
-      id: 'audit' as const,
-      label: 'Activity Audit Trail',
-      icon: ShieldAlert,
-      badge: null,
-    },
-  ];
+  // Dedicated Navigation Items for Barangay Administration vs Public Viewer
+  const navItems = userRole === 'admin'
+    ? [
+        {
+          id: 'dashboard' as const,
+          label: 'Executive Dashboard',
+          icon: LayoutDashboard,
+          badge: null,
+        },
+        {
+          id: 'calendar' as const,
+          label: 'Calendar Manager',
+          icon: CalendarDays,
+          badge: null,
+        },
+        {
+          id: 'reservations' as const,
+          label: 'Facility Approvals',
+          icon: Building2,
+          badge: pendingReservationsCount > 0 ? pendingReservationsCount : null,
+          badgeColor: 'bg-accent text-white animate-pulse',
+        },
+        {
+          id: 'audit' as const,
+          label: 'Activity Audit Trail',
+          icon: ShieldAlert,
+          badge: null,
+        },
+      ]
+    : [
+        {
+          id: 'calendar' as const,
+          label: 'Barangay Calendar',
+          icon: CalendarDays,
+          badge: null,
+        },
+        {
+          id: 'reservations' as const,
+          label: 'Facility Booking',
+          icon: Building2,
+          badge: null,
+        },
+        {
+          id: 'dashboard' as const,
+          label: 'Community Overview',
+          icon: LayoutDashboard,
+          badge: null,
+        },
+      ];
 
   const handleNavClick = (tab: typeof activeTab) => {
     setActiveTab(tab);
@@ -118,10 +143,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenHelp, isOpenMobile, onCl
         {/* Navigation Menu */}
         <div className="flex-1 px-3 py-2 space-y-1.5 overflow-y-auto">
           <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 my-2">
-            Government Administration
+            {userRole === 'admin' ? 'Government Administration' : 'Public Services'}
           </p>
 
-          {adminNavItems.map(item => {
+          {navItems.map(item => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
 
@@ -148,6 +173,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenHelp, isOpenMobile, onCl
               </button>
             );
           })}
+
+          {userRole !== 'admin' && (
+            <div className="pt-2">
+              <button
+                onClick={() => {
+                  setIsAuthModalOpen(true);
+                  onCloseMobile();
+                }}
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl font-bold text-xs bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 transition-all cursor-pointer shadow-xs"
+              >
+                <KeyRound className="w-4 h-4" />
+                <span>Secretary Login</span>
+              </button>
+            </div>
+          )}
 
           <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 pt-4 pb-1">
             System Tools

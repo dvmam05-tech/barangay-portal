@@ -146,11 +146,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
-  // User Role (Dedicated Barangay Admin Console)
-  const [userRole, setUserRole] = useState<UserRole>('admin');
+  // User Role (Resident Viewer by default; Secretary Admin when unlocked with PIN 1234)
+  const [userRole, setUserRole] = useState<UserRole>(() => {
+    const saved = localStorage.getItem('barangay_user_role');
+    return saved === 'admin' ? 'admin' : 'resident';
+  });
 
-  // Security & Authentication: Officials always authenticated
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(true);
+  // Security & Authentication: Unlocked only with PIN 1234
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('barangay_user_role') === 'admin';
+  });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   // Navigation tab
@@ -460,26 +465,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
-  // Security & Admin Authentication Functions
-  const authenticateAdmin = (_pin: string): boolean => {
-    setIsAdminAuthenticated(true);
-    setUserRole('admin');
-    setIsAuthModalOpen(false);
-    return true;
+  // Security & Admin Authentication Functions (PIN: 1234)
+  const authenticateAdmin = (pin: string): boolean => {
+    if (pin.trim() === '1234') {
+      setIsAdminAuthenticated(true);
+      setUserRole('admin');
+      setIsAuthModalOpen(false);
+      try {
+        localStorage.setItem('barangay_user_role', 'admin');
+      } catch (e) {
+        console.error(e);
+      }
+      addToast({
+        type: 'success',
+        title: 'Secretary Access Granted',
+        message: 'Admin controls unlocked. You can now add, edit, and manage calendar events.',
+      });
+      return true;
+    }
+
+    addToast({
+      type: 'error',
+      title: 'Incorrect Passcode',
+      message: 'The 4-digit PIN you entered is invalid.',
+    });
+    return false;
   };
 
   const lockAdmin = () => {
-    // Retain admin console
+    setIsAdminAuthenticated(false);
+    setUserRole('resident');
+    try {
+      localStorage.setItem('barangay_user_role', 'resident');
+    } catch (e) {
+      console.error(e);
+    }
     addToast({
       type: 'info',
-      title: 'Barangay Admin Console',
-      message: 'Official administration workspace is active.',
+      title: 'Viewer Mode Active',
+      message: 'Admin controls locked. You are now in public view-only mode.',
     });
   };
 
   const requestAdminAccess = () => {
-    setUserRole('admin');
-    setIsAdminAuthenticated(true);
+    setIsAuthModalOpen(true);
   };
 
   // Conflict Prevention Engine
