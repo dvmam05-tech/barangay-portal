@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, BookOpen, ShieldCheck, Calendar, Building2, Users, FileText, CheckCircle2 } from 'lucide-react';
+import { X, BookOpen, ShieldCheck, Calendar, Building2, FileText } from 'lucide-react';
 
 interface HelpModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h3 className="text-base font-bold">Barangay Portal User Guide</h3>
-              <p className="text-xs text-brand-light">Adherence to Nielsen's Usability Heuristics & Local Operations</p>
+              <p className="text-xs text-brand-light">Official Operations & System Reference</p>
             </div>
           </div>
           <button
@@ -80,35 +80,6 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* Nielsen's Usability Heuristics Implemented */}
-          <div>
-            <h4 className="font-semibold text-slate-800 dark:text-slate-100 text-sm mb-2">
-              Nielsen's Usability Heuristics Design Highlights
-            </h4>
-            <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span><strong>Visibility of System Status:</strong> Instant toast messages, real-time availability badges, and pending booking indicators.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span><strong>Match with Real World:</strong> Authentic Philippine barangay terminology (Punong Barangay, Kagawad, SK, Session Hall).</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span><strong>User Control & Freedom:</strong> Quick cancel buttons, easy status rollbacks, and demo data reset.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span><strong>Error Prevention:</strong> Real-time booking collision checking prevents double booking before submission.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span><strong>Flexibility:</strong> Role switcher allows testing both Admin/Secretary workflows and Resident workflows instantly.</span>
-              </li>
-            </ul>
           </div>
         </div>
 
