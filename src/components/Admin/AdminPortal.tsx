@@ -21,7 +21,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onOpenBookingModal,
   onOpenNewEventModal,
 }) => {
-  const { activeTab, setActiveTab, reservations, isSupabaseConnected, userRole, setIsAuthModalOpen } = useApp();
+  const { activeTab, setActiveTab, reservations, userRole, setIsAuthModalOpen } = useApp();
   const pendingReservations = reservations.filter(r => r.status === 'Pending');
 
   return (
@@ -46,12 +46,6 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-accent text-white shadow-xs">
                   Official LGU Portal
                 </span>
-                {isSupabaseConnected && (
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>Supabase Live</span>
-                  </span>
-                )}
                 <span className="text-xs text-slate-300 font-medium">
                   Office of the Punong Barangay & Secretariat • Municipality of Loon, Province of Bohol
                 </span>
